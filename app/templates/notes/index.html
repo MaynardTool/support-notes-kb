@@ -1,0 +1,93 @@
+# file: app/templates/notes/index.html
+{% extends "base.html" %}
+
+{% block title %}Notes - Support Notes KB{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Notes</h2>
+    <a href="{{ url_for('notes.new') }}" class="btn btn-primary">New Note</a>
+</div>
+
+<form method="GET" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <input type="text" name="q" class="form-control" placeholder="Search notes..." value="{{ query }}">
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select">
+                <option value="updated_desc" {% if sort == 'updated_desc' %}selected{% endif %}>Recently Updated</option>
+                <option value="updated_asc" {% if sort == 'updated_asc' %}selected{% endif %}>Oldest Updated</option>
+                <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Title A-Z</option>
+                <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Title Z-A</option>
+                <option value="created_desc" {% if sort == 'created_desc' %}selected{% endif %}>Recently Created</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <div class="form-check">
+                <input type="checkbox" name="archived" value="1" id="archived" class="form-check-input" {% if include_archived %}checked{% endif %}>
+                <label for="archived" class="form-check-label">Include Archived</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-secondary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+{% if selected_tags %}
+<div class="mb-3">
+    <strong>Filtered by tags:</strong>
+    {% for tag in selected_tags %}
+        <span class="badge bg-info">{{ tag }}</span>
+    {% endfor %}
+    <a href="{{ url_for('notes.index', q=query, sort=sort, archived='1' if include_archived else '0') }}" class="btn btn-sm btn-outline-secondary">Clear</a>
+</div>
+{% endif %}
+
+<div class="mb-3">
+    <strong>Filter by tag:</strong>
+    {% for tag in all_tags %}
+        <a href="{{ url_for('notes.index', q=query, tag=tag.name, sort=sort, archived='1' if include_archived else '0') }}" 
+           class="badge {% if tag.name in selected_tags %}bg-primary{% else %}bg-secondary{% endif %}">
+            {{ tag.name }}
+        </a>
+    {% endfor %}
+</div>
+
+{% if notes %}
+    <div class="list-group">
+        {% for note in notes %}
+            <a href="{{ url_for('notes.view', note_id=note.id) }}" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-1">
+                            {{ note.title }}
+                            {% if note.is_archived %}
+                                <span class="badge bg-warning">Archived</span>
+                            {% endif %}
+                        </h5>
+                        {% if note.summary %}
+                            <p class="mb-1 text-muted">{{ note.summary }}</p>
+                        {% endif %}
+                        <small class="text-muted">
+                            Updated {{ note.updated_at.strftime('%Y-%m-%d %H:%M') }}
+                            by {{ note.updated_by.display_name }}
+                        </small>
+                    </div>
+                    <div>
+                        {% for tag in note.tags[:3] %}
+                            <span class="badge bg-secondary">{{ tag.name }}</span>
+                        {% endfor %}
+                        {% if note.tags|length > 3 %}
+                            <span class="badge bg-secondary">+{{ note.tags|length - 3 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">No notes found. {% if query %}Try a different search.{% else %}Create your first note!{% endif %}</div>
+{% endif %}
+{% endblock %}

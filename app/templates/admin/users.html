@@ -1,0 +1,55 @@
+# file: app/templates/admin/users.html
+{% extends "base.html" %}
+
+{% block title %}User Management - Support Notes KB{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>User Management</h2>
+    <a href="{{ url_for('admin.new_user') }}" class="btn btn-primary">New User</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Display Name</th>
+            <th>Admin</th>
+            <th>Active</th>
+            <th>Last Login</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.email }}</td>
+            <td>{{ user.display_name }}</td>
+            <td>{% if user.is_admin %}<span class="badge bg-primary">Admin</span>{% else %}-{% endif %}</td>
+            <td>{% if user.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}</td>
+            <td>{{ user.last_login_at.strftime('%Y-%m-%d %H:%M') if user.last_login_at else 'Never' }}</td>
+            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+                {% if user.id != current_user.id %}
+                    <a href="{{ url_for('admin.reset_password', user_id=user.id) }}" class="btn btn-sm btn-warning">Reset Password</a>
+                    {% if user.is_active %}
+                    <form method="POST" action="{{ url_for('admin.deactivate_user', user_id=user.id) }}" class="d-inline">
+                        {{ csrf_token() }}
+                        <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('Deactivate this user?')">Deactivate</button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('admin.activate_user', user_id=user.id) }}" class="d-inline">
+                        {{ csrf_token() }}
+                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Activate this user?')">Activate</button>
+                    </form>
+                    {% endif %}
+                {% else %}
+                    <span class="text-muted">You</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

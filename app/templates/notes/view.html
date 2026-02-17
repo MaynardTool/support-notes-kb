@@ -1,0 +1,59 @@
+# file: app/templates/notes/view.html
+{% extends "base.html" %}
+
+{% block title %}{{ note.title }} - Support Notes KB{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ note.title }}</h2>
+        {% if note.is_archived %}
+            <span class="badge bg-warning">Archived</span>
+        {% endif %}
+    </div>
+    <div>
+        <a href="{{ url_for('notes.edit', note_id=note.id) }}" class="btn btn-secondary">Edit</a>
+        <form method="POST" action="{{ url_for('notes.toggle_archive', note_id=note.id) }}" class="d-inline">
+            {{ csrf_token() }}
+            <button type="submit" class="btn btn-{% if note.is_archived %}success{% else %}warning{% endif %}">
+                {% if note.is_archived %}Unarchive{% else %}Archive{% endif %}
+            </button>
+        </form>
+        <a href="{{ url_for('notes.delete', note_id=note.id) }}" class="btn btn-danger">Delete</a>
+    </div>
+</div>
+
+<div class="mb-3">
+    <strong>Tags:</strong>
+    {% for tag in note.tags %}
+        <span class="badge bg-secondary">{{ tag.name }}</span>
+    {% endfor %}
+</div>
+
+{% if note.summary %}
+<div class="alert alert-secondary">
+    <strong>Summary:</strong> {{ note.summary }}
+</div>
+{% endif %}
+
+{% if note.source %}
+<div class="mb-3">
+    <strong>Source:</strong> <code>{{ note.source }}</code>
+</div>
+{% endif %}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="markdown-content">
+            {{ rendered_body|safe }}
+        </div>
+    </div>
+</div>
+
+<div class="text-muted">
+    <small>
+        Created by {{ note.created_by.display_name }} on {{ note.created_at.strftime('%Y-%m-%d %H:%M') }}<br>
+        Last updated by {{ note.updated_by.display_name }} on {{ note.updated_at.strftime('%Y-%m-%d %H:%M') }}
+    </small>
+</div>
+{% endblock %}

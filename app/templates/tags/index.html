@@ -1,0 +1,54 @@
+# file: app/templates/tags/index.html
+{% extends "base.html" %}
+
+{% block title %}Tags - Support Notes KB{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Tags</h2>
+</div>
+
+<form method="GET" class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <input type="text" name="q" class="form-control" placeholder="Search tags..." value="{{ search }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-secondary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+{% if tags_with_counts %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tag Name</th>
+                <th>Notes Count</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tags_with_counts %}
+            <tr>
+                <td>{{ item.tag.name }}</td>
+                <td>{{ item.note_count }}</td>
+                <td>
+                    <a href="{{ url_for('tags.edit', tag_id=item.tag.id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                    {% if item.note_count == 0 %}
+                    <form method="POST" action="{{ url_for('tags.delete', tag_id=item.tag.id) }}" class="d-inline">
+                        {{ csrf_token() }}
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                    {% else %}
+                    <button class="btn btn-sm btn-danger" disabled title="Cannot delete - used by notes">Delete</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">No tags found.</div>
+{% endif %}
+{% endblock %}

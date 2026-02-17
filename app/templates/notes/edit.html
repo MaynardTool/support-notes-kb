@@ -1,0 +1,69 @@
+# file: app/templates/notes/edit.html
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Note - Support Notes KB{% endblock %}
+
+{% block content %}
+<h2>{{ action }} Note</h2>
+
+<form method="POST">
+    {{ csrf_token() }}
+    
+    <div class="mb-3">
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control") }}
+        {% if form.title.errors %}
+            <div class="text-danger">
+                {% for error in form.title.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.tags.label(class="form-label") }}
+        {{ form.tags(class="form-control", placeholder="Comma-separated tags (e.g., postgres, prod, runbook)") }}
+        <small class="text-muted">Separate multiple tags with commas</small>
+    </div>
+    
+    <div class="mb-3">
+        {{ form.summary.label(class="form-label") }}
+        {{ form.summary(class="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.source.label(class="form-label") }}
+        {{ form.source(class="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.body.label(class="form-label") }}
+        {{ form.body(class="form-control", rows=15, id="markdown-editor") }}
+        {% if form.body.errors %}
+            <div class="text-danger">
+                {% for error in form.body.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('notes.index') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
+<script>
+    var simplemde = new SimpleMDE({ 
+        element: document.getElementById("markdown-editor"),
+        spellChecker: false,
+        autosave: {
+            enabled: true,
+            uniqueId: "note_edit_{{ note.id if note else 'new' }}"
+        }
+    });
+</script>
+{% endblock %}

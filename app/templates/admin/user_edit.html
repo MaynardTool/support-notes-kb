@@ -1,0 +1,27 @@
+# file: app/templates/admin/user_edit.html
+{% extends "base.html" %}
+
+{% block title %}Reset Password - Support Notes KB{% endblock %}
+
+{% block content %}
+<h2>Reset Password for {{ user.display_name }}</h2>
+
+<form method="POST">
+    {{ csrf_token() }}
+    
+    <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        {% if form.password.errors %}
+            <div class="text-danger">
+                {% for error in form.password.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

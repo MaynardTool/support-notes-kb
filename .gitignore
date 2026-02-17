@@ -1,0 +1,30 @@
+# file: .gitignore
+__pycache__/
+*.py[cod]
+*$py.class
+
+.env
+.env.local
+.venv/
+env/
+venv/
+ENV/
+
+*.db
+*.sqlite
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+.DS_Store
+*.log
+
+migrations/versions/*.py
+!migrations/versions/.gitkeep
+
+# Build artifacts
+*.egg-info/
+uv.lock
+dist/
+build/

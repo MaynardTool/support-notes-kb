@@ -1,0 +1,43 @@
+# file: pyproject.toml
+[project]
+name = "support-notes-kb"
+version = "0.1.0"
+description = "Knowledge base for application support engineers"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0.0",
+    "flask-sqlalchemy>=3.1.0",
+    "flask-migrate>=4.0.0",
+    "flask-login>=0.6.0",
+    "flask-wtf>=1.2.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.0",
+    "werkzeug>=3.0.0",
+    "python-dotenv>=1.0.0",
+    "markdown>=3.5.0",
+    "bleach>=6.1.0",
+    "markdownify>=0.12.0",
+    "click>=8.0.0",
+    "email-validator>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-flask>=1.3.0",
+]
+
+[project.scripts]
+support-notes-kb = "app:create_app"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*", "importers*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

@@ -1,0 +1,63 @@
+support-notes-kb/
+├── .env.example
+├── .gitignore
+├── README.md
+├── docker-compose.yml
+├── pyproject.toml
+├── requirements.txt
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models.py
+│   ├── extensions.py
+│   ├── auth/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   ├── forms.py
+│   │   └── templates/
+│   ├── notes/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   ├── forms.py
+│   │   └── templates/
+│   ├── tags/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   └── templates/
+│   ├── admin/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   ├── forms.py
+│   │   └── templates/
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── partials/
+│   │   │   ├── flash_messages.html
+│   │   │   └── pagination.html
+│   │   ├── auth/
+│   │   │   ├── login.html
+│   │   │   └── logout.html
+│   │   ├── notes/
+│   │   │   ├── index.html
+│   │   │   ├── view.html
+│   │   │   ├── edit.html
+│   │   │   └── confirm_delete.html
+│   │   ├── tags/
+│   │   │   ├── index.html
+│   │   │   └── edit.html
+│   │   └── admin/
+│   │       ├── users.html
+│   │       ├── user_new.html
+│   │       └── user_edit.html
+│   └── static/
+│       └── style.css
+├── migrations/
+│   ├── README
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions/
+│       └── 001_initial.py
+└── importers/
+    ├── __init__.py
+    ├── import_files.py
+    └── import_onenote_html.py

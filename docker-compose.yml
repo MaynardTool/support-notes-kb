@@ -1,0 +1,41 @@
+# file: docker-compose.yml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: support-notes-kb-db
+    environment:
+      POSTGRES_USER: notesuser
+      POSTGRES_PASSWORD: notespass
+      POSTGRES_DB: notesdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notesuser -d notesdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: support-notes-kb-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://notesuser:notespass@postgres:5432/notesdb
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - SESSION_COOKIE_SECURE=false
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: flask run --host=0.0.0.0
+
+volumes:
+  postgres_data:

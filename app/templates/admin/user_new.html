@@ -1,0 +1,65 @@
+# file: app/templates/admin/user_new.html
+{% extends "base.html" %}
+
+{% block title %}New User - Support Notes KB{% endblock %}
+
+{% block content %}
+<h2>Create New User</h2>
+
+<form method="POST">
+    {{ csrf_token() }}
+    
+    <div class="mb-3">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        {% if form.email.errors %}
+            <div class="text-danger">
+                {% for error in form.email.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.display_name.label(class="form-label") }}
+        {{ form.display_name(class="form-control") }}
+        {% if form.display_name.errors %}
+            <div class="text-danger">
+                {% for error in form.display_name.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+        {% if form.password.errors %}
+            <div class="text-danger">
+                {% for error in form.password.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <div class="form-check">
+            {{ form.is_admin(class="form-check-input") }}
+            {{ form.is_admin.label(class="form-check-label") }}
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <div class="form-check">
+            {{ form.is_active(class="form-check-input") }}
+            {{ form.is_active.label(class="form-check-label") }}
+        </div>
+    </div>
+    
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
