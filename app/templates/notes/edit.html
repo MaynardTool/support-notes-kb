@@ -6,8 +6,8 @@
 {% block content %}
 <h2>{{ action }} Note</h2>
 
-<form method="POST">
-    {{ csrf_token() }}
+<form method="POST" id="note-form">
+    {{ form.hidden_tag() }}
     
     <div class="mb-3">
         {{ form.title.label(class="form-label") }}
@@ -39,7 +39,7 @@
     
     <div class="mb-3">
         {{ form.body.label(class="form-label") }}
-        {{ form.body(class="form-control", rows=15, id="markdown-editor") }}
+        <textarea name="body" id="markdown-editor" class="form-control" rows="15">{{ form.body.data or '' }}</textarea>
         {% if form.body.errors %}
             <div class="text-danger">
                 {% for error in form.body.errors %}
@@ -64,6 +64,11 @@
             enabled: true,
             uniqueId: "note_edit_{{ note.id if note else 'new' }}"
         }
+    });
+    
+    // Sync SimpleMDE value to textarea before form submit
+    document.getElementById('note-form').addEventListener('submit', function() {
+        simplemde.element.value = simplemde.value();
     });
 </script>
 {% endblock %}

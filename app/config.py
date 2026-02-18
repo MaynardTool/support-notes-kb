@@ -1,5 +1,6 @@
 # file: app/config.py
 import os
+import logging
 from datetime import timedelta
 
 
@@ -64,6 +65,9 @@ class Config:
         "td": ["colspan", "rowspan"],
         "th": ["colspan", "rowspan"],
     }
+
+    LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
+    LOG_FILE = os.environ.get("LOG_FILE", "app.log")
 
 
 class DevelopmentConfig(Config):

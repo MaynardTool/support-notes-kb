@@ -1,13 +1,30 @@
 # file: app/__init__.py
+import logging
 from flask import Flask
 from app.config import config
 from app.extensions import db, login_manager, migrate, csrf
 from app.models import User
 
 
+def setup_logging(app):
+    log_level = getattr(logging, app.config.get("LOG_LEVEL", "INFO"))
+    log_file = app.config.get("LOG_FILE", "app.log")
+
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
+    )
+
+    app.logger.setLevel(log_level)
+    return app.logger
+
+
 def create_app(config_name="default"):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+
+    setup_logging(app)
 
     db.init_app(app)
     login_manager.init_app(app)

@@ -1,4 +1,5 @@
 # file: app/notes/routes.py
+import logging
 from datetime import datetime, timezone
 from flask import render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
@@ -8,6 +9,8 @@ from app.notes.forms import NoteForm, DeleteNoteForm, ArchiveNoteForm
 from app.extensions import db
 from app.models import Note, Tag
 from app.utils.markdown import render_markdown
+
+logger = logging.getLogger(__name__)
 
 
 @notes.route("/")
@@ -62,9 +65,11 @@ def index():
 @notes.route("/notes/new", methods=["GET", "POST"])
 @login_required
 def new():
+    logger.info(f"User {current_user.email} accessing new note form")
     form = NoteForm()
 
     if form.validate_on_submit():
+        logger.info(f"Creating new note: {form.title.data} by {current_user.email}")
         note = Note(
             title=form.title.data,
             body=form.body.data,
@@ -84,9 +89,12 @@ def new():
         db.session.add(note)
         db.session.commit()
 
+        logger.info(f"Note created successfully: {note.id}")
+
         flash("Note created successfully!", "success")
         return redirect(url_for("notes.view", note_id=note.id))
 
+    logger.debug(f"Form validation failed: {form.errors}")
     return render_template("notes/edit.html", form=form, action="Create")
 
 
@@ -103,9 +111,11 @@ def view(note_id):
 @login_required
 def edit(note_id):
     note = Note.query.get_or_404(note_id)
+    logger.info(f"User {current_user.email} editing note: {note.id}")
     form = NoteForm(obj=note)
 
     if form.validate_on_submit():
+        logger.info(f"Updating note: {note.id} by {current_user.email}")
         note.title = form.title.data
         note.body = form.body.data
         note.summary = form.summary.data
@@ -122,6 +132,8 @@ def edit(note_id):
                 note.tags.append(tag)
 
         db.session.commit()
+
+        logger.info(f"Note updated successfully: {note.id}")
 
         flash("Note updated successfully!", "success")
         return redirect(url_for("notes.view", note_id=note.id))
